@@ -3,7 +3,7 @@ import time
 import schedule
 
 from pipelines.zid.main import main as zid_main
-from pipelines.daftarah.main import main as daftra_main
+from pipelines.daftara.main import main as daftra_main
 
 from shared.logger import setup_logger
 
