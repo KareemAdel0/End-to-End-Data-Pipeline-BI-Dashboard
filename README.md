@@ -1,39 +1,75 @@
-End-to-End-Data-Pipeline-BI-Dashboard-Project
+# E-commerce ETL Pipeline & Power BI Dashboard (Zid + Daftra → PostgreSQL → Power BI)
 
-ETL pipeline for integrating Zid (e-commerce) and Daftarah (accounting/ERP) data into Supabase PostgreSQL for Power BI dashboards.
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat&logo=pandas&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=flat&logo=powerbi&logoColor=black)
 
-## Overview
-- **Zid Pipeline**: Handles extraction, transformation, and loading from Zid API. Supports incremental updates and webhooks for real-time sync.
-- **Daftarah Pipeline**: Placeholder for Daftarah integration (collaborator to implement).
-- **Shared Components**: Common utilities for DB connections and logging.
-- **Scheduling**: GitHub Actions for nightly incremental updates.
-- **Webhooks**: Real-time handler for Zid events (deploy to Supabase Edge Functions).
+A production ETL pipeline built for an online retail client. It pulls data from two business systems, **Zid** (e-commerce platform) and **Daftra** (accounting/ERP), cleans and models it with Pandas, and loads it into a **PostgreSQL** database that powers a **Power BI** dashboard for sales, purchases, customers, products, and orders.
 
-## Setup
-1. Clone the repo: `git clone https://github.com/your-username/Rahma-Store-ETL-Project.git`
-2. Install dependencies: `pip install -r requirements.txt`
-3. Copy `.env.example` to `.env` and fill in credentials.
-4. For Zid: Run `python pipelines/zid/main.py` (or global `python main.py` for both).
+---
 
-## Running ETL
-- **Full Run (Both)**: `python main.py`
-- **Zid Only**: `python pipelines/zid/main.py`
-- **Daftarah Only**: `python pipelines/daftarah/main.py`
-- **Incremental Mode**: Add `--incremental` flag (implement in main.py if needed).
+## 📌 Highlights
 
-## Scheduling (GitHub Actions)
-- Nightly incremental sync configured in `.github/workflows/update-data.yml`.
-- Manual trigger via GitHub UI.
+- **Two API sources, one model:** paginated extraction from the Zid and Daftra REST APIs, merged into a single reporting database.
+- **Incremental loading:** each run fetches only records changed since the last load (based on `updated_at` / `modified` timestamps), instead of re-downloading everything.
+- **Upserts, not duplicates:** batched `INSERT ... ON CONFLICT` upserts on primary keys keep tables consistent across runs.
+- **Rich transformations:** nested JSON from the APIs is flattened into fact and dimension tables (orders, products, customers, categories, locations, shipping methods, abandoned carts, coupons, reviews, invoices, payments, refunds, purchase orders, expenses, ...).
+- **Column blacklists** drop unused or sensitive API fields before loading.
+- **Scheduling & logging:** a scheduler runs the incremental sync every 12 hours, with shared structured logging for every step.
 
-## Webhooks (Zid Real-Time)
-- Deploy `webhooks/handler.py` to Supabase Edge Functions.
-- Register with Zid using the provided script.
-- URL: https://your-supabase-project.supabase.co/functions/v1/zid-webhook-handler
+## 🏗️ Architecture
 
-## Collaboration
-- Zid work: `pipelines/zid/`
-- Daftarah work: `pipelines/daftarah/`
-- Use branches for features (e.g., `zid-incremental`).
+```
+ Zid API ─────┐                                     ┌─► Power BI Data Model (DAX KPIs)
+              ├─► Extract ─► Transform ─► Load ─► PostgreSQL ─┤
+ Daftra API ──┘   (paginated,  (Pandas)   (batched           └─► Scheduled Refresh
+                  incremental)            upserts)
+```
 
-## Tests
-- Add tests in `tests/` using pytest.
+## 📂 Repository Structure
+
+```
+├── main.py                        # Runs the full pipeline (Zid + Daftra)
+├── pipelines/
+│   ├── zid/                       # extract.py · transform.py · load.py · main.py
+│   └── daftara/                   # extract.py · transform.py · load.py · column_blacklist.py
+├── scheduler/
+│   └── incremental_scheduler.py   # Incremental sync every 12 hours
+├── shared/
+│   ├── db_utils.py                # PostgreSQL connection
+│   └── logger.py                  # Shared logger
+└── Dashboard/                     # Power BI dashboard export (PDF)
+```
+
+## ⚙️ Setup
+
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Create a `.env` file with your credentials:
+   ```
+   DB_USER=...
+   DB_PASSWORD=...
+   DB_HOST=...
+   DB_PORT=5432
+   DB_NAME=...
+   ZID_AUTHORIZATION_TOKEN=...
+   ZID_MANAGER_TOKEN=...
+   DAFTARA_API_KEY=...
+   ```
+3. Run:
+   ```bash
+   python main.py                                  # full load
+   INCREMENTAL=1 python main.py                    # incremental load
+   python -m scheduler.incremental_scheduler       # run every 12 hours
+   ```
+
+## 📊 Dashboard
+
+The Power BI report (8 pages) covers sales and orders performance, purchases, customers, products, and financial KPIs, with dynamic time filters and scheduled refresh. See the [`Dashboard/`](Dashboard) folder.
+
+---
+
+Built by [Kareem Adel](https://www.linkedin.com/in/kareem-adel-mostafa/), freelance Data Scientist & BI Developer.
