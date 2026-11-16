@@ -39,7 +39,7 @@ A production ETL pipeline built for an online retail client. It pulls data from 
 ├── shared/
 │   ├── db_utils.py                # PostgreSQL connection
 │   └── logger.py                  # Shared logger
-└── Dashboard/                     # Power BI dashboard export (PDF)
+└── Dashboard/                     # Power BI dashboard screenshots
 ```
 
 ## ⚙️ Setup
@@ -68,7 +68,21 @@ A production ETL pipeline built for an online retail client. It pulls data from 
 
 ## 📊 Dashboard
 
-The Power BI report (8 pages) covers sales and orders performance, purchases, customers, products, and financial KPIs, with dynamic time filters and scheduled refresh. See the [`Dashboard/`](Dashboard) folder.
+The Power BI report (8 pages) covers sales and orders performance, purchases and expenses, customers, and products for both data sources, with dynamic time filters and scheduled refresh.
+
+> Client name and all figures are blurred for confidentiality.
+
+**Daftra: Sales Performance**
+![Daftra sales](Dashboard/daftra-sales.jpg)
+
+**Daftra: Purchases & Expenses**
+![Daftra purchases](Dashboard/daftra-purchases.jpg)
+
+**Zid: Sales Performance**
+![Zid sales](Dashboard/zid-sales.jpg)
+
+**Zid: Customer Behavior**
+![Zid customers](Dashboard/zid-customers.jpg)
 
 ---
 
