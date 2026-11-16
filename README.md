@@ -5,7 +5,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=flat&logo=powerbi&logoColor=black)
 
-A production ETL pipeline built for an online retail client. It pulls data from two business systems, **Zid** (e-commerce platform) and **Daftra** (accounting/ERP), cleans and models it with Pandas, and loads it into a **PostgreSQL** database that powers a **Power BI** dashboard for sales, purchases, customers, products, and orders.
+A production ETL pipeline built as a freelance project for an online retail client. It pulls data from two business systems, **Zid** (e-commerce platform) and **Daftra** (accounting/ERP), cleans and models it with Pandas, and loads it into a **PostgreSQL** database that powers a **Power BI** dashboard for sales, purchases, customers, products, and orders.
 
 ---
 
@@ -86,4 +86,7 @@ The Power BI report (8 pages) covers sales and orders performance, purchases and
 
 ---
 
-Built by [Kareem Adel](https://www.linkedin.com/in/kareem-adel-mostafa/), freelance Data Scientist & BI Developer.
+## 👥 Team
+
+- [Kareem Adel](https://www.linkedin.com/in/kareem-adel-mostafa/): Daftra pipeline (`pipelines/daftara/`)
+- [Mohamed Hossam](https://www.linkedin.com/in/mohamed-hossam-elgammal/): Zid pipeline (`pipelines/zid/`)
